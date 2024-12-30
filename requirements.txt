@@ -1,2 +1,3 @@
 flask            # For building the backend server
 python-docx      # For processing .docx files
+gunicorn
