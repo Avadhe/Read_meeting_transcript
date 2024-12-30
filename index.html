@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Upload</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        input[type="file"] {
+            margin-top: 15px;
+        }
+
+        .greeting {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="greeting">Hello, User!</h1>
+        <p>Please select a .docx file to proceed:</p>
+        <input type="file" id="fileInput" accept=".docx">
+        <button id="processFileButton" style="margin-top: 15px;">Process File</button>
+        <p id="output" style="margin-top: 20px; color: #555; white-space: pre-wrap;"></p>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const processFileButton = document.getElementById('processFileButton');
+        const output = document.getElementById('output');
+
+        processFileButton.addEventListener('click', () => {
+            const file = fileInput.files[0];
+            if (!file) {
+                alert('Please select a file first.');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            fetch('http://127.0.0.1:5000/process-file', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    output.textContent = `Error: ${data.error}`;
+                } else {
+                    output.textContent = `File Content:\n${data.content}`;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                output.textContent = 'An error occurred while processing the file.';
+            });
+        });
+    </script>
+</body>
+</html>
